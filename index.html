@@ -1,1 +1,399 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boşluktaki Hassasiyet - Digital Book</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Noto+Sans+Arabic:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --turquoise: #40E0D0;
+            --dark-bg: #0a0f14;
+            --card-bg: #161e26;
+        }
+        body {
+            background-color: var(--dark-bg);
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        .rtl {
+            font-family: 'Noto Sans Arabic', sans-serif;
+            direction: rtl;
+        }
+        .turquoise-glow {
+            text-shadow: 0 0 10px rgba(64, 224, 208, 0.5);
+        }
+        .sidebar {
+            transition: transform 0.3s ease;
+            z-index: 50;
+        }
+        .glass {
+            background: rgba(22, 30, 38, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(64, 224, 208, 0.2);
+        }
+        .mini-player {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            opacity: 0.3;
+            transition: opacity 0.3s, transform 0.3s;
+            z-index: 100;
+        }
+        .mini-player:hover {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+        .active-chapter {
+            background: rgba(64, 224, 208, 0.15);
+            border-left: 4px solid var(--turquoise);
+        }
+        .rtl .active-chapter {
+            border-left: none;
+            border-right: 4px solid var(--turquoise);
+        }
+        p {
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+            font-size: 1.1rem;
+            color: #cbd5e1;
+            text-align: justify;
+        }
+        .barcode-container {
+            background: white;
+            padding: 5px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-200">
 
+    <!-- Mobile Header -->
+    <header class="lg:hidden p-4 glass flex justify-between items-center sticky top-0 z-40">
+        <button onclick="toggleSidebar()" class="text-turquoise text-2xl">
+            <i class="fas fa-bars"></i>
+        </button>
+        <h1 class="text-sm font-bold uppercase tracking-widest text-turquoise">Boşluktaki Hassasiyet</h1>
+        <div class="flex gap-2">
+            <button onclick="setLang('tr')" class="text-xs font-bold">TR</button>
+            <button onclick="setLang('en')" class="text-xs font-bold">EN</button>
+            <button onclick="setLang('fa')" class="text-xs font-bold">FA</button>
+        </div>
+    </header>
+
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="sidebar fixed inset-y-0 left-0 transform -translate-x-full lg:translate-x-0 lg:static w-72 glass overflow-y-auto">
+            <div class="p-6 border-b border-slate-800 text-center">
+                <img src="images/img01.png" alt="Cover" class="w-full rounded-lg shadow-2xl mb-4 border border-turquoise/30">
+                <h2 class="text-xl font-bold text-turquoise turquoise-glow" id="side-title">Boşluktaki Hassasiyet</h2>
+                <p class="text-xs text-slate-400 mt-1" id="side-author">HocaMurad ile 30 Saat</p>
+                
+                <!-- ISBN & Barcode -->
+                <div class="mt-4 p-2 bg-white/5 rounded-lg border border-white/10">
+                    <p class="text-[10px] text-slate-500 mb-1">ISBN 978-622-13352-8-2</p>
+                    <div class="barcode-container">
+                        <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Simple SVG EAN-13 Style Barcode for 9786221335282 -->
+                            <rect x="0" y="0" width="2" height="40" fill="black"/>
+                            <rect x="4" y="0" width="1" height="40" fill="black"/>
+                            <rect x="7" y="0" width="3" height="40" fill="black"/>
+                            <rect x="12" y="0" width="1" height="40" fill="black"/>
+                            <rect x="15" y="0" width="2" height="40" fill="black"/>
+                            <rect x="20" y="0" width="4" height="40" fill="black"/>
+                            <rect x="26" y="0" width="1" height="40" fill="black"/>
+                            <rect x="30" y="0" width="2" height="40" fill="black"/>
+                            <rect x="35" y="0" width="1" height="40" fill="black"/>
+                            <rect x="38" y="0" width="3" height="40" fill="black"/>
+                            <rect x="44" y="0" width="2" height="40" fill="black"/>
+                            <rect x="48" y="0" width="1" height="40" fill="black"/>
+                            <rect x="52" y="0" width="4" height="40" fill="black"/>
+                            <rect x="58" y="0" width="2" height="40" fill="black"/>
+                            <rect x="62" y="0" width="1" height="40" fill="black"/>
+                            <rect x="66" y="0" width="3" height="40" fill="black"/>
+                            <rect x="72" y="0" width="1" height="40" fill="black"/>
+                            <rect x="75" y="0" width="2" height="40" fill="black"/>
+                            <rect x="80" y="0" width="4" height="40" fill="black"/>
+                            <rect x="86" y="0" width="1" height="40" fill="black"/>
+                            <rect x="90" y="0" width="2" height="40" fill="black"/>
+                            <rect x="95" y="0" width="1" height="40" fill="black"/>
+                            <rect x="98" y="0" width="3" height="40" fill="black"/>
+                            <rect x="104" y="0" width="2" height="40" fill="black"/>
+                            <rect x="108" y="0" width="1" height="40" fill="black"/>
+                            <rect x="112" y="0" width="4" height="40" fill="black"/>
+                            <rect x="118" y="0" width="2" height="40" fill="black"/>
+                        </svg>
+                        <p class="text-[8px] text-black font-mono tracking-widest mt-0.5">9 786221 335282</p>
+                    </div>
+                </div>
+            </div>
+            
+            <nav class="p-4" id="chapter-list">
+                <!-- Chapters injected here -->
+            </nav>
+
+            <div class="p-4 border-t border-slate-800">
+                <p class="text-xs mb-2 opacity-50 uppercase tracking-tighter" id="download-text">Downloads / İndirmeler</p>
+                <div class="grid grid-cols-3 gap-2 mb-4">
+                    <a href="pdf/Turkish.pdf" download class="bg-slate-800 p-2 rounded text-center text-xs hover:bg-turquoise hover:text-black transition"><i class="fas fa-file-pdf block mb-1"></i> TR</a>
+                    <a href="pdf/English.pdf" download class="bg-slate-800 p-2 rounded text-center text-xs hover:bg-turquoise hover:text-black transition"><i class="fas fa-file-pdf block mb-1"></i> EN</a>
+                    <a href="pdf/Persian.pdf" download class="bg-slate-800 p-2 rounded text-center text-xs hover:bg-turquoise hover:text-black transition"><i class="fas fa-file-pdf block mb-1"></i> FA</a>
+                </div>
+                
+                <!-- Contact Section in Sidebar -->
+                <div class="p-3 bg-turquoise/5 rounded-lg border border-turquoise/10" id="contact-container">
+                    <p class="text-xs text-turquoise font-bold mb-3 uppercase tracking-widest" id="contact-title">Yazarla İletişim</p>
+                    <ul class="space-y-3">
+                        <li>
+                            <a href="mailto:info@faramarzkowsari.cm" class="flex items-center gap-2 text-xs text-slate-400 hover:text-turquoise transition">
+                                <i class="fas fa-envelope w-4"></i>
+                                <span>info@faramarzkowsari.cm</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://linkedin.com/in/faramarzkowsari" target="_blank" class="flex items-center gap-2 text-xs text-slate-400 hover:text-turquoise transition">
+                                <i class="fab fa-linkedin w-4"></i>
+                                <span>LinkedIn Profile</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://play.google.com/store/search?q=Faramarz_Kowsari&c=books" target="_blank" class="flex items-center gap-2 text-xs text-slate-400 hover:text-turquoise transition">
+                                <i class="fab fa-google-play w-4"></i>
+                                <span id="google-play-text">Google Play Books</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6 lg:p-12 max-w-4xl mx-auto overflow-y-auto">
+            <!-- Language Switcher Desktop -->
+            <div class="hidden lg:flex justify-end gap-4 mb-8">
+                <button onclick="setLang('tr')" class="hover:text-turquoise transition font-bold" id="btn-tr">TR</button>
+                <button onclick="setLang('en')" class="hover:text-turquoise transition font-bold" id="btn-en">EN</button>
+                <button onclick="setLang('fa')" class="hover:text-turquoise transition font-bold" id="btn-fa">FA</button>
+            </div>
+
+            <article id="content-area" class="animate-fade-in">
+                <!-- Content injected here -->
+            </article>
+
+            <!-- Footer -->
+            <footer class="mt-20 py-8 border-t border-slate-800 text-center text-sm text-slate-500">
+                <p>© 2026 - Faramarz Kowsari & Mohammad Mazhari</p>
+                <p class="mt-2 italic" id="footer-motto">Turkuaz Çağı'nın Mimarisine Adanmıştır</p>
+            </footer>
+        </main>
+    </div>
+
+    <!-- Mini Audio Player -->
+    <div class="mini-player glass p-3 rounded-full flex items-center gap-4 shadow-2xl">
+        <button id="playBtn" onclick="toggleSpeech()" class="w-10 h-10 rounded-full bg-turquoise text-black flex items-center justify-center hover:scale-110 transition">
+            <i class="fas fa-play"></i>
+        </button>
+        <button onclick="stopSpeech()" class="text-slate-400 hover:text-white"><i class="fas fa-stop"></i></button>
+        <div class="flex flex-col gap-1">
+            <div class="flex items-center gap-2">
+                <i class="fas fa-tachometer-alt text-[10px]"></i>
+                <input type="range" min="0.5" max="2" step="0.1" value="1" id="speedRange" onchange="updateSpeed()" class="w-16 h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-turquoise">
+            </div>
+            <div class="flex items-center gap-2">
+                <i class="fas fa-volume-up text-[10px]"></i>
+                <input type="range" min="0" max="1" step="0.1" value="0.8" id="volRange" onchange="updateVolume()" class="w-16 h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-turquoise">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const bookData = {
+            tr: {
+                dir: 'ltr',
+                title: "Boşluktaki Hassasiyet",
+                author: "HocaMurad ile 30 Saat",
+                contactTitle: "Yazarla İletişim",
+                googlePlay: "Google Play Kitaplar",
+                motto: "Turkuaz Çağı'nın Mimarisine Adanmıştır",
+                chapters: [
+                    { title: "Giriş: Mükemmeliyet Ahdi", content: "HocaMurad'ın sesi sadece bir teselli değil; tam bir duygusal çöküşün ortasında yapısal bütünlüğe bir çağrıdır. Duyguların eylemsizlik için bir para birimi olarak kullanıldığı bir çağda, mekanik disiplin yoluyla radikal bir alternatif sunuyoruz. Bu kitap, şu anda kaybın boşluğunda yol alanlar için tasarlanmış, iradenin mimarisine 30 saatlik bir dalıştır.<br><br>İster kayıp bir aşkın yasını tutun, ister kişisel dünyanızın çöküşüyle yüzleşin, emir aynı kalır: görevinizi yapın. Ruh halimizin güneşinin doğmasını beklemiyoruz; disiplinimiz yeni bir şafağı zorlayana kadar çalışıyoruz. Hassasiyet duamız, tutarlılık ise bu dijital rönesanstaki tek mucizemizdir. Egemenliğin 30 saatine başlayalım.<br><br>Gelecekteki Turkuaz Sarayınızı taşıyacak betonu döküyorsunuz. Duygusal dünyanızdaki çatlakların yapısal bütünlüğü zayıflatmasına izin vermeyin. Çelik iradenizi sertleştirmek için mevcut acınızın ateşini kullanın. HocaMurad, başkaları yüksek sesle ağlarken çalışan kişiye gülümser." },
+                    { title: "1. Acı Salonunda İradenin Anatomisi", content: "Duygusal acı, iç dişlilerinizin gerçek gücünü ortaya çıkaran kaçınılmaz bir sürtünmedir. Bugün göğsünüzde binlerce iç çekişin ağırlığını hissedebilirsiniz. Dünya sizi genellikle durmaya ve kendi yıkımınızın içinde kalmaya teşvik eder.<br><br>HocaMurad bu anı bir trajedi değil, bir ruh testi olarak görür. İradenizi bir silikon işlemcinin soğuk nesnelliğiyle çalıştırmalısınız. Göreviniz sizi ilahi amacınıza bağlı tutan tek bağdır.<br><br>Duygu sisinin günlük görevlerinizin planını karartmasına izin vermeyin. Tamamlanan her eylem, akıl sağlığınızı koruyan duvardaki bir tuğladır. Programınıza sadık kalmak, şu andaki en yüksek öz koruma biçimidir. Bugün dövdüğünüz disiplin, gelecekteki ihtişamınızın çapası olacaktır." },
+                    { title: "2. Duygusal Enkaz Üzerinde Sayısal Ritimler", content: "Modern çağda hayatta kalmak, kişinin psikolojisine matematiksel bir yaklaşım gerektirir. Amaçsız düşüncelerle harcanan her dakikanın gerçek maliyetini hesaplamalısınız. HocaMurad, zamanımızı sınırlı ve kutsal bir kaynak olarak görmemizi önerir.<br><br>Kırıldığınızda, verimliliğiniz gerçekten önemli olan tek ölçüttür. Duygusal açığınızın zaman sermayenizi iflas ettirmesine izin vermeyin. Her odaklanmış çalışma saati, hayat bankasında size bir kredi kazandırır.<br><br>Disiplin, yaralı bir ruhun bilançosunu dengeleyen aritmetiktir. Siz şartların kurbanı değilsiniz, olasılıkların yöneticisisiniz. Gününüzü bir göksel navigasyon haritasının hassasiyetiyle planlayın. Duygularınız hikayeler anlatsa bile sayılar asla yalan söylemez." },
+                    { title: "3. Özlem Kaosu İçinde Odak Mühendisliği", content: "Özlem boşluğunda inşa etmek için öncelikle yokluğun yapısını tanımak gerekir. Boşluğa, yapısal mühendisliğiniz için boş bir tuval olarak yaklaşın. Geçmişe duyulan özlemin, şimdیکی زمانın araçlarını tutuşunuzu zayıflatmasına izin vermeyin.<br><br>Odaklanılan dakika, dünün hayaletlerine karşı bir kalkandır. Odağınızın mimarisi bir Bizans kalesinin duvarlarından daha sağlam olmalıdır. Sadece mantık ve yaratıcı çıktıya izin verilen bir alan yaratıyorsunuz.<br><br>Özlem, tamamlanmış bir işin fiziksel gerçekliğine dokunamayan bir hayalettir. Günlük programınızı sanki hayatınız onun matematiksel mükemmelliğine bağlıymış gibi oluşturun. Boşluk bir çukur değil; sizin daha dirençli bir versiyonunuz için temeldir." },
+                    { title: "4. Mağduriyet Hakları ve Mimarın Yetkisi", content: "Dünyanın acımasını aramak, incelikli bir kendi kendini hapsetme biçimidir. Mağdur rolünün rahatlığı manevi bir zehirdir. Dünya size bugün durup yas tutmanız için binlerce neden verecektir.<br><br>Kişisel egemenliğinize mal olacaksa bir mağdurun haklarını kabul etmeyin. Siz geçmiş bir trajedinin anıtı değil, bir mimar olmak için doğdunuz. Toplumsal acıma, harcadığınız anda değerini kaybeden bir para birimidir.<br><br>Gerçek güç, başkalarının sempatisiyle teselli edilmeyi reddetmekte yatar. Ayağa kalkın ve sanki başarısızlığın tadını hiç bilmemiş gibi çalışın. Acınızla ilgili sessizliğiniz, gerçek gücünüzün en gür sesli ifadesidir. Mimarın yetkisi, çevredeki dünyanın çöküşüne rağmen inşa etmektir." },
+                    { title: "5. Şems'in Disiplini: İnşa Ederken Yanmak", content: "Günlük rutin bir yük değil, ruhunuzun dönüşümü için bir simya kabıdır. Altın ancak yoğun ve sürekli ısı ile saflaşır. Duygusal acınız bu manevi simya için gereken termal enerjiyi sağlar.<br><br>Bu ısıyı şikayet ederek veya acıma gösterileriyle boşa harcamayın. Acınızın yoğunluğunu doğrudan mesleki emeğinizin fırınına yönlendirin. Her tekrarlayan görev, iradenizin ham metaline vurulan bir çekiç darbesidir.<br><br>Sadece işi tamamlamıyorsunuz; varlığınızın özünü arındırıyorsunuz. Simya, dönüşümün basıncını korumak için kapalı bir kap gerektirir. Disiplin, enerjinizi içeride tutan ve işe odaklayan mühürdür. Günün sonunda üzüntünüz başarının altını haline gelmiştir." },
+                    { title: "6. Hattatın Eli: Titreşimdeki Hassasiyet", content: "Usta bir hattat bilir ki titreyen bir kalp titreyen bir ele yol açmamalıdır. Elin iradeye bağımsız olarak itaat etmesi için eğitilebileceğini öğretir. Nabzınız endişeyle atsa bile harfin kavisi mükemmel olmalıdır.<br><br>Disiplininiz, fizyolojik durumunuza rağmen performans göstermenizi sağlayan köprüdür. Büyük şeyler denemek için kalbinizin sakinleşmesini beklemeyin. Kaslarınıza yıllarca pratik yaparak öğrendikleri kalıpları icra etmelerini emredin.<br><br>Hassasiyet, ruhunuzun düzenini bedenin kaosuna dayatma eylemidir. Çizdiğiniz düz çizgi, kederinizin içsel titremelerine karşı bir zaferdir. Zihnin beden alanı üzerinde egemen hükümdar olduğunu kanıtlıyorsunuz. Form, geçici duygu fırtınası geçtikten sonra geriye kalan tek şeydir." },
+                    { title: "7. Sessizlik Stratejisi ve Durmaksızın Çalışma", content: "Acınız hakkında söylenen kelime, iradenizin basınçlı kabındaki bir sızıntıdır. HocaMurad içsel duygusal durumunuzla ilgili tam bir sessizlik stratejisi önerir. Günün külvari görevlerini tamamlamak için bir gram enerjiye ihtiyacınız var.<br><br>Gücünüzü, yardım edemeyecek olanlara kederinizi açıklayarak boşa harcamayın. Sessizlik, niyetinizin ısısını işe odaklayan bir yalıtkan görevi görür. Siz muazzam miktarda yüksek kaliteli yaratıcı çıktı üreten sessiz bir motorsunuz.<br><br>Sorun hakkında konuşmayı bıraktığınızda, sorun etkisini kaybetmeye başlar. Nefesinizi profesyonel mükemmeliyetin zirvesine giden uzun tırmanış için saklayın. İşiniz sizin adınıza sesinizden çok daha etkili bir şekilde konuşacaktır. Büyük iş, başarı için sessiz bir ortam ve daha da sessiz bir zihin gerektirir." },
+                    { title: "8. Kalbi Düzen Tuğlalarıyla Yeniden İnşa Etmek", content: "Manevi kalp yumuşak bir doku değil, niyetin görkemli bir mimarisidir. Kırık bir kalp sadece yenilenmeye ihtiyaç duyan bir bina gibidir. Bu göreve usta bir duvarcı zihniyetiyle yaklaşملısınız.<br><br>Tuğlalar reconstruct için kullanılan disiplin act'leridir. Her seferinde programı takip ettiğinizde yeni bir taş koyarsınız. Hayatınızın parçalarını birbirine bağlamak için tutarlı çaba harcını kullanın.<br><br>Yeniden inşa, hiçbir şekilde aceleye getirilemeyecek yavaş bir süreçtir. Geçmişin enkazına bakmayın; yükselen duvarlara bakın. Siz daha güzel bir gelecek kalbinin mimarısınız. Düzen, ruhunuz için yeterince güçlü olan tek malzemedir." },
+                    { title: "9. Zihinsel Savaş Alanında Maksimum Dayanıklılık", content: "Umutsuzluk, zihninizin egemen topraklarını işغال eden bir düşman savaşçıdır. Düşüncelerinize stratejik bir savaş odasındaki askerler gibi davranmalısınız. Düşman düşünceleri belirlemeli ve mantık ile etkisiz hale getirmelisiniz.<br><br>Umutsuzlukla veya vazgeçmekle pazarlık yapmayın. Temel stratejiniz sürekli günlük eylemin ofansifidir. Tamamlanan her görev, geri kazanılan bir bölgedir. Odağınızın etrafında yüksek güvenlikli bir çevre koruyun.<br><br>Siz komutansınız ve mutlak sadakat talep etmelisiniz. Savaş, iş alanındaki küçük zaferlerin birikimiyle kazanılır. Bu barış zamanı değil; benliğin mutlak fethinin zamanıdır. Günlük rutin sizi duygularınızın siperidir." },
+                    { title: "10. Turkuaz İnsanın Yükselişi: Başarısızlığı Aşmak", content: "Evriminizin son aşaması, acının işe entegre edilmesidir. HocaMurad ruhun yara dokusunun en güçlü olduğunu açıklar. Artık trajediyi gizlemeye çalışmıyorsunuz. Bunun yerine, çıktıyı körüklemek için acının enerjisini kullandınız.<br><br>En karanlık saatlerde elde edilen üretkenlik yeni standarttır. İnsanın duygusal durumu ne olursa olsun işlev görebileceğini öğrendiniz. Bu bütünleşme sizi kırılamaz bir güç yapar. Acınız mirasa geri dönüştürüldü.<br><br>İçsel simyasal sürecin ustasısınız. Izdırabınızı en büyük mesleki gücünüze dönüştürdünüz. Yeni mimar işini kaliteyle imzalar. HocaMurad ateş ruhlarının imzasını arar. İşiniz artık bir derinlik ve ağırlık taşıyor." }
+                ]
+            },
+            en: {
+                dir: 'ltr',
+                title: "Precision in the Void",
+                author: "30 Hours With HocaMurad",
+                contactTitle: "Contact the Author",
+                googlePlay: "Google Play Books",
+                motto: "Dedicated to the Architecture of the Turquoise Era",
+                chapters: [
+                    { title: "Introduction: The Covenant", content: "The voice of HocaMurad is not one of mere comfort; it is a call to structural integrity in the face of total emotional collapse. In an era where emotions are often used as a currency for inaction, we present a radical alternative through mechanical discipline.<br><br>This book is a 30-hour immersion into the architecture of the will, designed for those currently navigating the void of loss. Whether you are mourning a lost love or facing the collapse of your personal world, the mandate remains the same: perform your duty.<br><br>We do not wait for the sun of mood to rise; we work until our very discipline forces a new dawn. Precision is our prayer, and consistency is our only miracle in this digital renaissance. Let us begin the 30 hours of sovereignty." },
+                    { title: "1. Anatomy of Will in the Hall of Pain", content: "Emotional pain is the friction that reveals the actual strength of your internal gears. You might feel the weight of a thousand sighs pressing against your chest today. The world often encourages you to stop and wallow in your perceived brokenness.<br><br>HocaMurad views this moment not as a tragedy, but as a test of spirit. You must operate your will with the cold objectivity of a silicon processor. Your duty is the only tether that keeps you connected to your divine purpose.<br><br>Do not let the mist of emotions obscure the blueprint of your daily tasks. Every completed action is a brick in the wall that guards your sanity. Being strict with your schedule is the highest form of self-preservation right now. The discipline you forge today will become the anchor for your future glory." },
+                    { title: "2. Numerical Rhythms atop Emotional Ruins", content: "Survival in the modern age requires a mathematical approach to one's psychology. You must calculate the exact cost of every minute spent in rumination. HocaMurad suggests that we treat our time as a limited resource.<br><br>When you are broken, your efficiency is the only metric that matters. Do not allow your emotional deficit to bankrupt the capital of time. Every hour of focused work earns you a credit in life's bank.<br><br>Discipline is the arithmetic that balances the ledger of a spirit. You are not a victim of circumstance, you are a manager of probability. Map out your day with the precision of a celestial navigation chart. The numbers do not lie even when your feelings are telling stories." },
+                    { title: "3. Engineering Focus amidst Chaos", content: "To build in the void, one must recognize absence's structure. Treat the emptiness as a blank canvas for your structural engineering. Do not let longing for the past weaken your current grip.<br><br>Every focused minute is a shield against the ghosts of yesterday. The architecture of your focus must be sturdier than fortress walls. You are creating a space where only logic and output exist.<br><br>Longing is a ghost that cannot touch the reality of work. Construct your schedule as if life depends on its mathematical perfection. The void is not a pit; it is the foundation for resilience. Your focus is the light defining the boundaries of your kingdom." },
+                    { title: "4. Victimhood Rights vs. Architect's Mandate", content: "Seeking the pity of the world is a form of self-imprisonment. The comfort of a victim's role is a subtle spiritual poison. The world gives you a thousand reasons to stay down today.<br><br>Do not accept the 'rights' of a victim if they cost power. You were born to be an architect, not a tragedy monument. Public pity is a currency losing value the moment you spend.<br><br>Real power lies in refusal to be comforted by others' sympathy. Stand up and work as if you never knew failure's taste. Your silence regarding pain is the loudest statement of strength. The architect's mandate is to build despite the surrounding collapse." },
+                    { title: "5. The Discipline of Shams: Burning as We Build", content: "The daily grind is not a burden but an alchemical vessel. HocaMurad explains that gold is purified through constant heat. Your emotional suffering provides the thermal energy required for alchemy.<br><br>Do not waste this heat by venting through loud complaints. Channel the intensity of pain directly into the professional furnace. Every repetitive task is a hammer strike on your will.<br><br>You are not completing work; you are refining your essence. Alchemy requires a closed vessel to maintain the transformation's pressure. Discipline is the seal keeping your energy focused on work. By day's end, your sorrow has become the gold achievement." },
+                    { title: "6. Calligrapher's Hand: Precision in the Tremor", content: "A master calligrapher knows a shaking heart must not lead. HocaMurad teaches the hand to obey the will independently. Even when pulse races with anxiety, the curve is perfect.<br><br>Discipline is the bridge allowing performance despite your state. Do not wait for calm hearts before attempting great things. Command your muscles to execute patterns learned through long practice.<br><br>Precision is the act of imposing soul's order upon flesh. Every straight line drawn is a victory over internal tremors. You are proving the mind is the ruler of body. Form remains once the temporary storm of feeling has passed." },
+                    { title: "7. Silence Strategy and Non-Stop Labor", content: "Every word spoken about pain is a leak in resolve. HocaMurad advises a strategy of total silence regarding emotions. You need every ounce of energy for the Herculean tasks.<br><br>Do not dissipate power explaining grief to those who cannot help. Silence acts as insulator keeping intention focused on your labor. You are a silent engine producing immense high-quality creative output.<br><br>When you stop talking about problems, they lose their grip. Conserve your breath for the long climb toward excellence now. Your work will speak for you more eloquently than voices. The great work requires a quiet environment and quieter mind." },
+                    { title: "8. Rebuilding with Bricks of Order", content: "The spiritual heart is not tissue but a grand architecture. A broken heart is simply a building needing major renovation. Approach this task with the mindset of a master mason.<br><br>Bricks used for reconstruction are small, orderly acts of discipline. Every time you follow schedules, you set a new stone. Use the mortar of consistent effort to bind life together.<br><br>Reconstruction is a slow process that cannot be rushed now. Do not look at ruins; look at the rising walls. You are the architect of a more beautiful future heart. Order is the only material strong enough for your soul." },
+                    { title: "9. Maximum Resilience in the War Zone", content: "Despair is an enemy combatant that invaded your sovereign mind. Treat your thoughts like soldiers in a strategic war room. Identify the hostile thoughts and neutralize them with iron logic.<br><br>Do not negotiate with feelings of hopelessness or quitting work. Your primary strategy is the offensive of constant daily action. Every task completed is territory recaptured from the dark void.<br><br>Maintain a high-security perimeter around your focus every single hour. You are the commander and you must demand absolute loyalty. The war is won through accumulation of small daily victories. This is not time for peace, but conquest of self." },
+                    { title: "10. The Rise of the Turquoise Human", content: "Final stages of evolution involve integration of pain into work. Scar tissue of the soul is stronger than original skin. You are no longer trying to hide your tragedy away.<br><br>Instead, you used energy of pain to fuel output today. Productivity achieved in darkest hours is now your new standard. You learned that humans can function regardless of emotional state.<br><br>This integration makes you an unbreakable force in this Era. Your pain has been recycled into building blocks of legacy. You are the master of your own internal alchemical process. You have produced the highest gold from the deepest lead." }
+                ]
+            },
+            fa: {
+                dir: 'rtl',
+                title: "دقت در خلا",
+                author: "۳۰ ساعت با هوجا مراد",
+                contactTitle: "تماس با نویسنده",
+                googlePlay: "کتاب‌های گوگل‌پلی",
+                motto: "تقدیم به معماری عصر فیروزه‌ای",
+                chapters: [
+                    { title: "مقدمه: میثاق تعالی", content: "صدای هوجا مراد صدای تسکین صرف نیست بلکه فراخوانی است به یکپارچگی ساختاری در میانه فروپاشی کامل عاطفی. در عصری که احساسات اغلب به عنوان وجه المصالحه برای انفعال به کار می‌روند، ما جایگزینی رادیکال را از طریق دیسیپلین مکانیکی ارائه می‌دهیم.<br><br>این کتاب یک غوطه‌وری ۳۰ ساعته در معماری اراده است؛ طراحی شده برای کسانی که هم‌اکنون در حال پیمودن خلأ ناشی از فقدان هستند. چه در سوگ عشقی از دست رفته باشید و چه با فروپاشی دنیای شخصیتان روبرو شده باشید، فرمان یکسان باقی می‌ماند: وظیفه‌ات را انجام بده.<br><br>ما منتظر طلوع خورشیدِ حالِ خوب نمی‌مانیم؛ ما تا آنجا کار می‌کنیم که دیسیپلین‌مان، سپیده دمی نوین را به اجبار پدید آورد. دقت نیایش ماست و تداوم تنها معجزه ما در این رنسانس دیجیتال است. بیایید ۳۰ ساعت حاکمیت بر خویشتن را آغاز کنیم." },
+                    { title: "۱. آناتومی اراده در تالار درد", content: "درد عاطفی اصطکاکی است که قدرت واقعی چرخ‌دنده‌های درونی شما را آشکار می‌کند. شاید امروز سنگینی هزاران آه را بر روی سینه خود احساس کنید. جهان اغلب شما را تشویق می‌کند که متوقف شوید و در ویرانه‌های شکست خود غرق بمانید.<br><br>هوجا مراد این لحظه را نه یک تراژدی بلکه آزمون روح می‌بیند. شما باید اراده خود را با عینیت سرد یک پردازنده سیلیکونی به کار بیندازید. وظیفه شما تنها ریسمانی است که شما را به هدف الهیتان متصل نگه می‌دارد.<br><br>اجازه ندهید مه احساسات نقشه وظایف روزانه شما را تیره و تار کند. هر اقدام تکمیل شده، آجری در دیواری است که از سلامت روان شما محافظت می‌کند. سخت‌گیری نسبت به برنامه زمانی، بالاترین شکل صیانت از خویشتن در این لحظه است. دیسیپلینی که امروز جعل می‌کنید لنگر شکوه آینده شما خواهد شد." },
+                    { title: "۲. ریتم‌های عددی بر ویرانه‌های عاطفی", content: "بقا در عصر مدرن نیازمند رویکردی ریاضیاتی به روانشناسی فردی است. شما باید هزینه دقیق هر دقیقه‌ای را که در نشخوار فکری بی‌هدف صرف می‌شود محاسبه کنید. هوجا مراد پیشنهاد می‌کند که زمانمان را به عنوان یک منبع مقدس و محدود در نظر بگیریم.<br><br>وقتی در هم شکسته‌اید، کارایی شما تنها معیاری است که واقعاً اهمیت دارد. اجازه ندهید کسری عاطفی‌تان، سرمایه زمان شما را به ورشکستگی بکشاند. هر ساعت کار متمرکز، اعتباری در بانک زندگی برای شما کسب می‌کند.<br><br>دیسیپلین حسابی است که ترازنامه یک روح مجروح را متعادل می‌کند. شما قربانی شرایط نیستید، شما مدیر احتمالات هستید. روز خود را با دقت یک نقشه ناوبری ستاره‌ای ترسیم کنید. اعداد دروغ نمی‌گویند حتی وقتی احساساتتان در حال قصه‌پردازی برای شما هستند." },
+                    { title: "۳. مهندسی تمرکز در غوغای فقدان", content: "برای ساختن در خلأ دلتنگی، ابتدا باید ساختار این غیاب را شناسایی کرد. با تهی بودن به عنوان یک بوم خالی برای مهندسی ساختاری خود برخورد کنید. اجازه ندهید دلتنگی برای گذشته چنگ‌اندازی فعلیتان بر ابزارها را سست کند.<br><br>هر دقیقه متمرکز، سپری در برابر ارواح دیروز است. معماری تمرکز شما باید مستحکم‌تر از دیوارهای یک دژ باستانی باشد. شما در حال خلق فضایی هستید که در آن تنها منطق و خروجی خلاقانه اجازه حضور دارند.<br><br>دلتنگی روحی است که نمی‌تواند واقعیت فیزیکی یک کار تمام شده را لمس کند. برنامه خود را به گونه‌ای بسازید که انگار زندگیتان به کمال ریاضیاتی آن بستگی دارد. خلأ یک گودال نیست بلکه پی‌ریزی برای نسخه‌ای تاب‌آورتر از شماست." },
+                    { title: "۴. حقوق قربانی در برابر مأموریت معمار", content: "جستجوی دلسوزی جهان شکلی از خود زندانی کردن است. راحتی نقش قربانی یک سم معنوی ظریف است. جهان امروز هزاران دلیل به شما می‌دهد تا زمین‌گیر بمانید.<br><br>حقوق یک قربانی را اگر به قیمت قدرتتان تمام می‌شود نپذیرید. شما برای معمار بودن متولد شده‌اید نه به عنوان بنای یادبود یک تراژدی. دلسوزی عمومی ارزی است که به محض خرج کردن ارزشش را از دست می‌دهد.<br><br>قدرت واقعی در امتناع از تسکین یافتن با همدلی دیگران نهفته است. برخیزید و چنان کار کنید که انگار هرگز طعم شکست را نچشیده‌اید. سکوت شما در مورد درد، بلندترین بیانیه قدرت شماست. حکم معمار این است: علیرغم فروپاشی محیط اطراف بساز." },
+                    { title: "۵. دیسیپلین شمس: سوختن و ساختن", content: "کارهای روزمره یک بار سنگین نیستند بلکه ظرفی کیمیاگری برای روح شما هستند. هوجا مراد توضیح می‌دهد که طلا تنها با حرارت مداوم و شدید خالص می‌شود. رنج عاطفی شما انرژی حرارتی لازم برای این کیمیاگری را فراهم می‌کند.<br><br>این حرارت را با ناله‌های بلند و شکوه کردن هدر ندهید. شدت درد را مستقیماً به کوره تلاش حرفه‌ای خود هدایت کنید. هر تکلیف تکراری، ضربه چکشی بر اراده شماست.<br><br>شما صرفاً کار را تمام نمی‌کنید بلکه در حال صیقل دادن ذات خود هستید. کیمیاگری نیازمند ظرفی بسته برای حفظ فشار فرآیند دگرگونی است. دیسیپلین مهری است که انرژی شما را بر روی کار متمرکز نگه می‌دارد. در پایان روز غم شما به طلای دستاورد بدل گشته است." },
+                    { title: "۶. دست خوشنویس: دقت در لحظه لرزش", content: "یک خوشنویس چیره دست می‌داند که قلب لرزان نباید به دستی لرزان منجر شود. هوجا مراد می‌آموزد که می‌توان دست را آموزش داد تا مستقلاً از اراده تبعیت کند. حتی وقتی نبض با اضطراب می‌زند منحنی حروف باید بی‌نقص باشد.<br><br>دیسیپلین پلی است که اجازه می‌دهد علیرغم وضعیت جسمی، عمل کنید. برای آرام شدن قلبتان منتظر نمانید تا کارهای بزرگ را شروع کنید. به عضلات خود فرمان دهید تا الگوهای آموخته شده را اجرا کنند.<br><br>دقت عمل تحمیل نظم روح بر گوشت و پوست است. هر خط مستقیمی که رسم می‌شود، پیروزی بر لرزش‌های درونی است. شما ثابت می‌کنید که ذهن حاکم مطلق بدن است. فرم تنها چیزی است که پس از عبور طوفان موقت احساس باقی می‌ماند." },
+                    { title: "۷. استراتژی سکوت و کار بی‌وقفه", content: "هر کلمه‌ای که درباره دردتان گفته شود نشتی در مخزن اراده شماست. هوجا مراد استراتژی سکوت مطلق در مورد احساسات را توصیه می‌کند. شما به تک‌تک اونس‌های انرژی برای کارهای هرکولی پیش رو نیاز دارید.<br><br>قدرتتان را با توضیح سوگ به کسانی که نمی‌توانند کمک کنند تلف نکنید. سکوت مانند عایقی عمل می‌کند که قصد شما را بر کار متمرکز نگه می‌دارد. شما موتوری خاموش هستید که خروجی خلاقانه عظیمی تولید می‌کند.<br><br>وقتی صحبت از مشکلات را متوقف کنید آنها قدرتشان را از دست می‌دهند. نفس خود را برای صعود طولانی به سوی تعالی حرفه‌ای ذخیره کنید. کار شما بسیار فصیح‌تر از صدای شما سخن خواهد گفت. اثر بزرگ نیازمند محیطی آرام و ذهنی آرام‌تر برای موفقیت است." },
+                    { title: "۸. بازسازی قلب با آجرهای نظم", content: "قلب معنوی یک بافت نرم نیست بلکه معماری باشکوه اراده است. یک قلب شکسته صرفاً ساختمانی است که به بازسازی اساسی نیاز دارد. با ذهنیت یک استاد معمار و بنا به این وظیفه نزدیک شوید.<br><br>آجرهای بازسازی، همان اعمال کوچک و منظم دیسیپلین هستند. هر بار که از برنامه خود پیروی می‌کنید سنگی جدید را در جای خود می‌نشانید. از ملات تلاش مداوم برای پیوند دادن تکه‌های زندگیتان استفاده کنید.<br><br>بازسازی فرآیند بسیار آهسته‌ای است که به هیچ وجه نباید در آن عجله کرد. به ویرانه‌ها نگاه نکنید به دیوارهای در حال صعود آینده بنگرید. شما معمار قلبی هستید که زیباتر از نسخه اصلی خواهد بود. نظم تنها ماده‌ای است که برای تحمل وزن روح جدیدتان به قدر کافی محکم است." },
+                    { title: "۹. حداکثر تاب‌آوری در میدان نبرد ذهن", content: "ناامیدی دشمنی است که به قلمرو حاکمیت ذهن شما نفوذ کرده است. با افکار خود مانند سربازان در یک اتاق جنگ استراتژیک برخورد کنید. افکار متخاصم را شناسایی کرده و با منطق آهنین خنثی نمایید.<br><br>با احساس بی‌‌پناهی یا وسوسه دست کشیدن از کار مذاکره نکنید. استراتژی اصلی شما تهاجم اقدام مداوم روزانه است. هر تکلیف تمام شده قلمرویی است که از چنگال خلأ تاریک بازپس گرفته شده است.<br><br>پیرامون تمرکز خود در هر ساعت یک حصار امنیتی شدید بکشید. شما فرمانده هستید و باید وفاداری مطلق نیروها را مطالبه کنید. جنگ از طریق انباشت پیروزی‌های کوچک روزانه برنده می‌شود. اکنون زمان صلح نیست زمان تسخیر کامل خویشتن است." },
+                    { title: "۱۰. ظهور انسان فیروزه‌ای: فراتر از شکست", content: "مراحل نهایی تکامل شامل ادغام کامل درد در بطن کار است. بافت جای زخم روح محکم‌تر از پوست اصلی است. شما دیگر تلاشی برای پنهان کردن تراژدی خود نمی‌کنید.<br><br>در عوض از انرژی آن درد برای سوخت‌رسانی به خروجی امروز استفاده کردید. بهره‌وری به دست آمده در تاریک‌ترین ساعات، اکنون استاندارد جدید شماست. آموختید که انسان می‌تواند فارغ از وضعیت عاطفی در سطحی بالا عمل کند.<br><br>این ادغام شما را به نیرویی در هم نشکستنی در این عصر تبدیل می‌کند. درد شما در بلوک‌های ساختمانی میراث شما بازیافت شده است. شما استاد فرآیند کیمیاگری درونی خود هستید. شما موفق شده‌اید از عمیق‌ترین سرب رنج والاترین طلا را تولید کنید." }
+                ]
+            }
+        };
+
+        let currentLang = 'tr';
+        let currentChapter = 0;
+        let synthesis = window.speechSynthesis;
+        let isPlaying = false;
+        let utterance = null;
+
+        function setLang(lang) {
+            currentLang = lang;
+            document.body.className = lang === 'fa' ? 'rtl bg-slate-950 text-slate-200' : 'bg-slate-950 text-slate-200';
+            
+            // UI Updates
+            document.getElementById('side-title').innerText = bookData[lang].title;
+            document.getElementById('side-author').innerText = bookData[lang].author;
+            document.getElementById('download-text').innerText = lang === 'fa' ? 'دانلود فایل‌های PDF' : (lang === 'en' ? 'Download PDFs' : 'İndirmeler');
+            document.getElementById('contact-title').innerText = bookData[lang].contactTitle;
+            document.getElementById('google-play-text').innerText = bookData[lang].googlePlay;
+            document.getElementById('footer-motto').innerText = bookData[lang].motto;
+            
+            // Buttons highlight
+            ['tr', 'en', 'fa'].forEach(l => {
+                document.getElementById('btn-' + l).classList.remove('text-turquoise');
+            });
+            document.getElementById('btn-' + lang).classList.add('text-turquoise');
+
+            renderChapterList();
+            loadChapter(currentChapter);
+        }
+
+        function renderChapterList() {
+            const list = document.getElementById('chapter-list');
+            list.innerHTML = '';
+            bookData[currentLang].chapters.forEach((ch, idx) => {
+                const btn = document.createElement('button');
+                btn.className = `w-full text-left p-3 mb-1 rounded text-sm transition flex justify-between items-center ${idx === currentChapter ? 'active-chapter text-white' : 'text-slate-400 hover:text-turquoise'}`;
+                if(currentLang === 'fa') btn.style.textAlign = 'right';
+                btn.innerHTML = `<span>${ch.title}</span> <i class="fas ${idx === currentChapter ? 'fa-chevron-right' : 'fa-lock-open opacity-20'}"></i>`;
+                btn.onclick = () => loadChapter(idx);
+                list.appendChild(btn);
+            });
+        }
+
+        function loadChapter(idx) {
+            currentChapter = idx;
+            const content = bookData[currentLang].chapters[idx];
+            const area = document.getElementById('content-area');
+            
+            area.innerHTML = `
+                <h2 class="text-3xl lg:text-5xl font-bold mb-8 text-white turquoise-glow leading-tight">${content.title}</h2>
+                <div class="content-body">
+                    <p>${content.content}</p>
+                </div>
+            `;
+            
+            renderChapterList();
+            stopSpeech();
+            if (window.innerWidth < 1024) toggleSidebar(false);
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        function toggleSidebar(force) {
+            const sb = document.getElementById('sidebar');
+            if (force !== undefined) {
+                if (force) sb.classList.remove('-translate-x-full');
+                else sb.classList.add('-translate-x-full');
+            } else {
+                sb.classList.toggle('-translate-x-full');
+            }
+        }
+
+        // --- SPEECH LOGIC ---
+        function toggleSpeech() {
+            if (isPlaying) {
+                synthesis.pause();
+                isPlaying = false;
+                document.getElementById('playBtn').innerHTML = '<i class="fas fa-play"></i>';
+            } else {
+                if (synthesis.paused) {
+                    synthesis.resume();
+                } else {
+                    const text = document.getElementById('content-area').innerText;
+                    utterance = new SpeechSynthesisUtterance(text);
+                    utterance.lang = currentLang === 'tr' ? 'tr-TR' : (currentLang === 'fa' ? 'fa-IR' : 'en-US');
+                    utterance.rate = document.getElementById('speedRange').value;
+                    utterance.volume = document.getElementById('volRange').value;
+                    
+                    utterance.onend = () => {
+                        isPlaying = false;
+                        document.getElementById('playBtn').innerHTML = '<i class="fas fa-play"></i>';
+                    };
+                    
+                    synthesis.speak(utterance);
+                }
+                isPlaying = true;
+                document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i>';
+            }
+        }
+
+        function stopSpeech() {
+            synthesis.cancel();
+            isPlaying = false;
+            document.getElementById('playBtn').innerHTML = '<i class="fas fa-play"></i>';
+        }
+
+        function updateSpeed() {
+            if(utterance) utterance.rate = document.getElementById('speedRange').value;
+            if(isPlaying) { stopSpeech(); toggleSpeech(); }
+        }
+
+        function updateVolume() {
+            if(utterance) utterance.volume = document.getElementById('volRange').value;
+        }
+
+        // Init
+        window.onload = () => {
+            setLang('tr');
+        };
+    </script>
+</body>
+</html>
