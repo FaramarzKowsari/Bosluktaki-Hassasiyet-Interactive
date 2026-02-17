@@ -12,6 +12,7 @@
             --turquoise: #40E0D0;
             --dark-bg: #0a0f14;
             --card-bg: #161e26;
+            --bright-yellow: #facc15;
         }
         body {
             background-color: var(--dark-bg);
@@ -35,36 +36,6 @@
             backdrop-filter: blur(10px);
             border: 1px solid rgba(64, 224, 208, 0.2);
         }
-        /* Mini Player Light Theme & Left Position */
-        .mini-player {
-            position: fixed;
-            bottom: 20px;
-            left: 20px; /* Moved to left */
-            right: auto;
-            background: rgba(255, 255, 255, 0.95); /* Light color */
-            color: #1e293b;
-            padding: 12px;
-            border-radius: 50px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            z-index: 100;
-            border: 1px solid rgba(0,0,0,0.1);
-            opacity: 0.8;
-            transition: opacity 0.3s, transform 0.3s;
-        }
-        .mini-player:hover {
-            opacity: 1;
-            transform: scale(1.05);
-        }
-        .mini-player button {
-            color: #1e293b;
-        }
-        .mini-player input[type="range"] {
-            accent-color: var(--turquoise);
-        }
-
         .active-chapter {
             background: rgba(64, 224, 208, 0.15);
             border-left: 4px solid var(--turquoise);
@@ -87,20 +58,43 @@
             display: inline-block;
             margin-top: 10px;
         }
+        /* Custom Message Box */
+        #msg-box {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ef4444;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            z-index: 1000;
+            display: none;
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-200">
+
+    <div id="msg-box">گوینده فارسی موجود نیست</div>
 
     <!-- Mobile Header -->
     <header class="lg:hidden p-4 glass flex justify-between items-center sticky top-0 z-40">
         <button onclick="toggleSidebar()" class="text-turquoise text-2xl">
             <i class="fas fa-bars"></i>
         </button>
-        <h1 class="text-sm font-bold uppercase tracking-widest text-turquoise">Boşluktaki Hassasiyet</h1>
-        <div class="flex gap-2">
-            <button onclick="setLang('tr')" class="text-xs font-bold">TR</button>
-            <button onclick="setLang('en')" class="text-xs font-bold">EN</button>
-            <button onclick="setLang('fa')" class="text-xs font-bold">FA</button>
+        <div class="flex items-center gap-4">
+             <!-- Compact Player for Mobile -->
+             <div class="flex items-center gap-2 bg-white/10 p-1 rounded-full px-3">
+                <button onclick="toggleSpeech()" id="playBtnMobile" class="text-turquoise"><i class="fas fa-play"></i></button>
+                <button onclick="stopSpeech()" class="text-slate-400 text-xs"><i class="fas fa-stop"></i></button>
+             </div>
+             <div class="flex gap-2 ml-2 border-l border-white/20 pl-2">
+                <button onclick="setLang('tr')" class="text-xs font-bold">TR</button>
+                <button onclick="setLang('en')" class="text-xs font-bold">EN</button>
+                <button onclick="setLang('fa')" class="text-xs font-bold font-arabic">فا</button>
+            </div>
         </div>
     </header>
 
@@ -191,11 +185,32 @@
 
         <!-- Main Content -->
         <main class="flex-1 p-6 lg:p-12 max-w-4xl mx-auto overflow-y-auto">
-            <!-- Language Switcher Desktop -->
-            <div class="hidden lg:flex justify-end gap-4 mb-8">
-                <button onclick="setLang('tr')" class="hover:text-turquoise transition font-bold" id="btn-tr">TR</button>
-                <button onclick="setLang('en')" class="hover:text-turquoise transition font-bold" id="btn-en">EN</button>
-                <button onclick="setLang('fa')" class="hover:text-turquoise transition font-bold" id="btn-fa">FA</button>
+            <!-- Header Controls Desktop -->
+            <div class="hidden lg:flex justify-end items-center gap-6 mb-12">
+                <!-- Compact Mini Player Integrated with Language Switcher -->
+                <div class="flex items-center gap-4 bg-white/95 p-2 px-4 rounded-full shadow-lg text-slate-900 border border-white/20">
+                    <div class="flex items-center gap-3">
+                        <button onclick="toggleSpeech()" id="playBtnDesktop" class="w-8 h-8 rounded-full bg-turquoise text-black flex items-center justify-center hover:scale-110 transition"><i class="fas fa-play"></i></button>
+                        <button onclick="stopSpeech()" class="hover:text-red-500 transition"><i class="fas fa-stop"></i></button>
+                    </div>
+                    <div class="h-6 w-px bg-slate-300"></div>
+                    <div class="flex flex-col text-[10px]">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <input type="range" min="0.5" max="2" step="0.1" value="1" id="speedRange" onchange="updateSpeed()" class="w-12 h-1 accent-turquoise">
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-volume-up"></i>
+                            <input type="range" min="0" max="1" step="0.1" value="0.8" id="volRange" onchange="updateVolume()" class="w-12 h-1 accent-turquoise">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <button onclick="setLang('tr')" class="hover:text-turquoise transition font-bold" id="btn-tr">TR</button>
+                    <button onclick="setLang('en')" class="hover:text-turquoise transition font-bold" id="btn-en">EN</button>
+                    <button onclick="setLang('fa')" class="hover:text-turquoise transition font-bold font-arabic" id="btn-fa">فا</button>
+                </div>
             </div>
 
             <article id="content-area" class="animate-fade-in">
@@ -208,24 +223,6 @@
                 <p class="mt-2 italic" id="footer-motto">Turkuaz Çağı'nın Mimarisine Adanmıştır</p>
             </footer>
         </main>
-    </div>
-
-    <!-- Mini Audio Player (LIGHT THEME) -->
-    <div class="mini-player">
-        <button id="playBtn" onclick="toggleSpeech()" class="w-10 h-10 rounded-full bg-turquoise text-black flex items-center justify-center hover:scale-110 transition shadow-lg">
-            <i class="fas fa-play"></i>
-        </button>
-        <button onclick="stopSpeech()" class="text-slate-600 hover:text-black"><i class="fas fa-stop"></i></button>
-        <div class="flex flex-col gap-1">
-            <div class="flex items-center gap-2">
-                <i class="fas fa-tachometer-alt text-[10px] text-slate-500"></i>
-                <input type="range" min="0.5" max="2" step="0.1" value="1" id="speedRange" onchange="updateSpeed()" class="w-16 h-1 bg-slate-300 rounded-lg appearance-none cursor-pointer accent-turquoise">
-            </div>
-            <div class="flex items-center gap-2">
-                <i class="fas fa-volume-up text-[10px] text-slate-500"></i>
-                <input type="range" min="0" max="1" step="0.1" value="0.8" id="volRange" onchange="updateVolume()" class="w-16 h-1 bg-slate-300 rounded-lg appearance-none cursor-pointer accent-turquoise">
-            </div>
-        </div>
     </div>
 
     <script>
@@ -241,16 +238,16 @@
                 downloadBtn: "PDF Olarak İndir",
                 chapters: [
                     { title: "Giriş: Mükemmeliyet Ahdi", content: "HocaMurad'ın sesi sadece bir teselli değil; tam bir duygusal çöküşün ortasında yapısal bütünlüğe bir çağrıdır. Duyguların eylemsizlik için bir para birimi olarak kullanıldığı bir çağda, mekanik disiplin yoluyla radikal bir alternatif sunuyoruz. Bu kitap, şu anda kaybın boşluğunda yol alanlar için tasarlanmış, iradenin mimarisine 30 saatlik bir dalıştır.<br><br>İster kayıp bir aşkın yasını tutun, ister kişisel dünyanızın çöküşüyle yüzleşin, emir aynı kalır: görevinizi yapın. Ruh halimizin güneşinin doğmasını beklemiyoruz; disiplinimiz yeni bir şafağı zorlayana kadar çalışıyoruz. Hassasiyet duamız, tutarlılık ise bu dijital rönesanstaki tek mucizemizdir. Egemenliğin 30 saatine başlayalım.<br><br>Gelecekteki Turkuaz Sarayınızı taşıyacak betonu döküyorsunuz. Duygusal dünyanızdaki çatlakların yapısal bütünlüğü zayıflatmasına izin vermeyin. Çelik iradenizi sertleştirmek için mevcut acınızın ateşini kullanın. HocaMurad, başkaları yüksek sesle ağlarken çalışan kişiye gülümser." },
-                    { title: "1. Acı Salonunda İradenin Anatomisi", content: "Duygusal acı, iç dişlilerinizin gerçek gücünü ortaya çıkaran kaçınılmaz bir sürtünmedir. Bugün göğsünüzde binlerce iç çekişin ağırlığını hissedebilirsiniz. Dünya sizi genellikle durmaya ve kendi yıkımınızın içinde kalmaya teşvik eder.<br><br>HocaMurad bu anı bir trajedi değil, bir ruh testi olarak görür. İradenizi bir silikon işlemcinin soğuk nesnelliğiyle çalıştırmalısınız. Göreviniz sizi ilahi amacınıza bağlı tutan tek bağdır.<br><br>Duygu sisinin günlük görevlerinizin planını karartmasına izin vermeyin. Tamamlanan her eylem, akıl sağlığınızı koruyan duvardaki bir tuğladır. Programınıza sadık kalmak, şu andaki en yüksek öz koruma biçimidir. Bugün dövdüğünüz disiplin, gelecekteki ihtişamınızın çapası olacaktır." },
-                    { title: "2. Duygusal Enkaz Üzerinde Sayısal Ritimler", content: "Modern çağda hayatta kalmak, kişinin psikolojisine matematiksel bir yaklaşım gerektirir. Amaçsız düşüncelerle harcanan her dakikanın gerçek maliyetini hesaplamalısınız. HocaMurad, zamanımızı sınırlı ve kutsal bir kaynak olarak görmemizi önerir.<br><br>Kırıldığınızda, verimliliğiniz gerçekten önemli olan tek ölçüttür. Duygusal açığınızın zaman sermayenizi iflas ettirmesine izin vermeyin. Her odaklanmış çalışma saati, hayat bankasında size bir kredi kazandırır.<br><br>Disiplin, yaralı bir ruhun bilançosunu dengeleyen aritmetiktir. Siz şartların kurbanı değilsiniz, olasılıkların yöneticisisiniz. Gününüzü bir göksel navigasyon haritasının hassasiyetiyle planlayın. Duygularınız hikayeler anlatsa bile sayılar asla yalan söylemez." },
+                    { title: "1. Acı Salonunda İradenin Anatomisi", content: "Duygusal acı, iç dişlilerinizin gerçek gücünü ortaya çıkaran kaçınılmaz bir sürtünmedir. Bugün göğsünüzde binlerce iç çekişin ağırlığını hissedebilirsiniz. Dünya sizi genellikle durmaya ve kendi yıkımınızın içinde kalmaya teşvik eder.<br><br>HocaMurad bu anı bir trajedi değil, bir ruh testi olarak görür. İradenizi bir silikon işlemcinin soğuk nesnelliğiyle çalıştırmalısınız. Göreviniz sizi ilahi amacınıza bağlı tutan tek bağdır.<br><br>Duygu sisinin günlük görevlerinizin planını karartmasına izin vermeyین. Tamamlanan هر eylem, akıl sağlığınızı koruyan duvardaki bir tuğladır. Programınıza sadık kalmak, şu andaki en yüksek öz koruma biçimidir. Bugün dövdüğünüz disiplin, gelecekteki ihtişamınızın çapası olacaktır." },
+                    { title: "2. Duygusal Enkaz Üzerinde Sayıسال Ritimler", content: "Modern çağda hayatta kalmak, kişinin psikolojisine matematiksel bir yaklaşım gerektirir. Amaçsız düşüncelerle harcanan her dakikanın gerçek maliyetini hesaplamalısınız. HocaMurad, zamanımızı sınırlı ve kutsal bir kaynak olarak görmemizi önerir.<br><br>Kırıldığınızda, verimliliğiniz gerçekten önemli olan tek ölçüttür. Duygusal açığınızın zaman sermayenizi iflas ettirmesine izin vermeyin. Her odaklanmış çalışma saati, hayat bankasında size bir kredi kazandırır.<br><br>Disiplin, yaralı bir ruhun bilançosunu dengeleyen aritmetiktir. Siz şartların kurbanı değilsiniz, olasılıkların yöneticisisiniz. Gününüzü bir göksel navigasyon haritasının hassasiyetiyle planlayın. Duygularınız hikayeler anlatsa bile sayılar asla yalan söylemez." },
                     { title: "3. Özlem Kaosu İçinde Odak Mühendisliği", content: "Özlem boşluğunda inşa etmek için öncelikle yokluğun yapısını tanımak gerekir. Boşluğa, yapısal mühendisliğiniz için boş bir tuval olarak yaklaşın. Geçmişe duyulan özlemin, şimdiki zamanın araçlarını tutuşunuzu zayıflatmasına izin vermeyin.<br><br>Odaklanılan dakika, dünün hayaletlerine karşı bir kalkandır. Odağınızın mimarisi bir Bizans kalesinin duvarlarından daha sağlam olmalıdır. Sadece mantık ve yaratıcı çıktıya izin verilen bir alan yaratıyorsunuz.<br><br>Özlem, tamamlanmış bir işin fiziksel gerçekliğine dokunamayan bir hayalettir. Günlük programınızı sanki hayatınız onun matematiksel mükemmelliğine bağlıymış gibi oluşturun. Boşluk bir çukur değil; sizin daha dirençli bir versiyonunuz için temeldir." },
-                    { title: "4. Mağduriyet Hakları ve Mimarın Yetkisi", content: "Dünyanın acımasını aramak, incelikli bir kendi kendini hapsetme biçimidir. Mağdur rolünün rahatlığı manevi bir zehirdir. Dünya size bugün durup yas tutmanız için binlerce neden verecektir.<br><br>Kişisel egemenliğinize mal olacaksa bir mağdurun haklarını kabul etmeyin. Siz geçmiş bir trajedinin anıtı değil, bir mimar olmak için doğdunuz. Toplumsal acıma, harcadığınız anda değerini kaybeden bir para birimidir.<br><br>Gerçek güç, başkalarının sempatisiyle teselli edilmeyi reddetmekte yatar. Ayağa kalkın ve sanki başarısızlığın tadını hiç bilmemiş gibi çalışın. Acınızla ilgili sessizliğiniz, gerçek gücünüzün en gür sesli ifadesidir. Mimarın yetkisi, çevredeki dünyanın çöküşüne rağmen inşa etmektir." },
-                    { title: "5. Şems'in Disiplini: İnşa Ederken Yanmak", content: "Günlük rutin bir yük değil, ruhunuzun dönüşümü için bir simya kabıdır. Altın ancak yoğun ve sürekli ısı ile saflaşır. Duygusal acınız bu manevi simya için gereken termal enerjiyi sağlar.<br><br>Bu ısıyı şikayet ederek veya acıma gösterileriyle boşa harcamayın. Acınızın yoğunluğunu doğrudan mesleki emeğinizin fırınına yönlendirin. Her tekrarlayan görev, iradenizin ham metaline vurulan bir çekiç darbesidir.<br><br>Sadece işi tamamlamıyorsunuz; varlığınızın özünü arındırıyorsunuz. Simya, dönüşümün basıncını korumak için kapalı bir kap gerektirir. Disiplin, enerjinizi içeride tutan ve işe odaklayan mühürdür. Günün sonunda üzüntünüz başarının altını haline gelmiştir." },
-                    { title: "6. Hattatın Eli: Titreşimdeki Hassasiyet", content: "Usta bir hattat bilir ki titreyen bir kalp titreyen bir ele yol açmamalıdır. Elin iradeye bağımsız olarak itaat etmesi için eğitilebileceğini öğretir. Nabzınız endişeyle atsa bile harfin kavisi mükemmel olmalıdır.<br><br>Disiplininiz, fizyolojik durumunuza rağmen performans göstermenizi sağlayan köprüdür. Büyük şeyler denemek için kalbinizin sakinleşmesini beklemeyin. Kaslarınıza yıllarca pratik yaparak öğrendikleri kalıpları icra etmelerini emredin.<br><br>Hassasiyet, ruhunuzun düzenini bedenin kaosuna dayatma eylemidir. Çizdiğiniz düz çizgi, kederinizin içsel titremelerine karşı bir zaferdir. Zihnin beden alanı üzerinde egemen hükümdar olduğunu kanıtlıyorsunuz. Form, geçici duygu fırtınası geçtikten sonra geriye kalan tek şeydir." },
+                    { title: "4. Mağduriyet Hakları ve Mimarın Yetkisi", content: "Dünyanın acımasını aramak, incelikli bir kendi kendini hapsetme biçimidir. Mağdur rolünün rahatlığı manevi bir zehirdir. Dünya size bugün durup yas tutmanız için binlerce neden verecektir.<br><br>Kişisel egemenliğinize mal olacaksa bir mağdurun haklarını kabul etmeyin. Siz geçmiş bir trajedinin anıtı değil, bir mimar olmak için doğdunuz. Toplumsal acıma, harcadığınız anda değerini kaybeden bir para birimidir.<br><br>Gerçek güç, başkalarının sempatisiyle teselli edilmeyi reddetmekte yatar. Ayağa kalkın ve sanki başarısızlığın tadını hiç bilmemiş gibi çalışın. Acınızla ilgili sessizliğiniz, gerçek gücünüzün en gür sesli ifadesidir. Mimarın yetکisi, çevredeki dünyanın çöküşüne rağmen inşa etmektir." },
+                    { title: "5. Şems'in Disiplini: İnşa Ederken Yanmak", content: "Günlük rutin bir yük değil, ruhunuzun dönüşümü için bir simya kabıdır. Altın ancak yoğun ve sürekli ısı ile saflaşır. Duygusal acınız bu manevi simya için gereken termal enerjiyi sağlar.<br><br>Bu ısıyı şikayet ederek veya acıma gösterileriyle boşa harcamayın. Acınızın yoğunluğunu doğrudan mesleki emeğinizن fırınına yönlendirin. Her tekrarlayan görev, iradenizin ham metaline vurulan bir çekiç darbesidir.<br><br>Sadece işi tamamlamıyorsunuz; varlığınızın özünü arındırıyorsunuz. Simya, dönüşümün basıncını korumak için kapalı bir kap gerektirir. Disiplin, enerjinizi içeride tutan ve işe odaklayan mühürdür. Günün sonunda üzüntünüz başarının altını haline gelmiştir." },
+                    { title: "6. Hattatın Eli: Titreşimdeki Hassasiyet", content: "Usta bir hattat bilir ki titreyen bir kalp titreyen bir ele yol açmamalıdır. Elin iradeye bağımsız olarak itaat etmesi için eğitilebileceğini öğretir. Nabzınız endişeyle atsa bile harfin kavisi mükemmel olmalıdır.<br><br>Disiplininiz, fizyolojik durumunuza rağmen performans göstermenizi sağlayan köprüdür. Büyük şeyler denemek için kalbinizin sakinleşmesini beklemiyoruz. Kaslarınıza yıllarca pratik yaparak öğrendikleri kalıpları icra etmelerini emredin.<br><br>Hassasiyet, ruhunuzun düzenini bedenin kaosuna dayatma eylemidir. Çizdiğiniz düz çizgi, kederinizin içsel titremelerine karşı bir zaferdir. Zihnin beden alanı üzerinde egemen hükümdar olduğunu kanıtlıyorsunuz. Form, geçici duygu fırtınası geçtikten sonra geriye kalan tek şeydir." },
                     { title: "7. Sessizlik Stratejisi ve Durmaksızın Çalışma", content: "Acınız hakkında söylenen kelime, iradenizin basınçlı kabındaki bir sızıntıdır. HocaMurad içsel duygusal durumunuzla ilgili tam bir sessizlik stratejisi önerir. Günün külvari görevlerini tamamlamak için bir gram enerjiye ihtiyacınız var.<br><br>Gücünüzü, yardım edemeyecek olanlara kederinizi açıklayarak boşa harcamayın. Sessizlik, niyetinizin ısısını işe odaklayan bir yalıtkan görevi görür. Siz muazzam miktarda yüksek kaliteli yaratıcı çıktı üreten sessiz bir motorsunuz.<br><br>Sorun hakkında konuşmayı bıraktığınızda, sorun etkisini kaybetmeye başlar. Nefesinizi profesyonel mükemmeliyetin zirvesine giden uzun tırmanış için saklayın. İşiniz sizin adınıza sesinizden çok daha etkili bir şekilde konuşacaktır. Büyük iş, başarı için sessiz bir ortam ve daha da sessiz bir zihin gerektirir." },
-                    { title: "8. Kalbi Düzen Tuğlalarıyla Yeniden İnşa Etmek", content: "Manevi kalp yumuşak bir doku değil, niyetin görkemli bir mimarisidir. Kırık bir kalp sadece yenilenmeye ihtiyaç duyan bir bina gibidir. Bu göreve usta bir duvarcı zihniyetiyle yaklaşmalısınız.<br><br>Tuğlalar reconstruct için kullanılan disiplin act'leridir. Her seferinde programı takip ettiğinizde yeni bir taş koyarsınız. Hayatınızın parçalarını birbirine bağlamak için tutarlı çaba harcını kullanın.<br><br>Yeniden inşa, hiçbir şekilde aceleye getirilemeyecek yavaş bir süreçtir. Geçmişin enkazına bakmayın; yükselen duvarlara bakın. Siz daha güzel bir gelecek kalbinin mimarısınız. Düzen, ruhunuz için yeterince güçlü olan tek malzemedir." },
-                    { title: "9. Zihinsel Savaş Alanında Maksimum Dayanıklılık", content: "Umutsuzluk, zihninizin egemen topraklarını işgal eden bir düşman savaşçıdır. Düşüncelerinize stratejik bir savaş odasındaki askerler gibi davranmalısınız. Düşman düşünceleri belirlemeli ve mantık ile etkisiz hale getirmelisiniz.<br><br>Umutsuzlukla veya vazgeçmekle pazarlık yapmayın. Temel stratejiniz sürekli günlük eylemin ofansifidir. Tamamlanan her görev, geri kazanılan bir bölgedir. Odağınızın etrafında yüksek güvenlikli bir çevre koruyun.<br><br>Siz komutansınız ve mutlak sadakat talep etmelisiniz. Savaş, iş alanındaki küçük zaferlerin birikimiyle kazanılır. Bu barış zamanı değil; benliğin mutlak fethinin zamanıdır. Günlük rutin sizi duygularınızın siperidir." },
-                    { title: "10. Turkuaz İnsanın Yükselişi: Başarısızlığı Aşmak", content: "Evriminizin son aşaması, acının işe entegre edilmesidir. HocaMurad ruhun yara dokusunun en güçlü olduğunu açıklar. Artık trajediyi gizlemeye çalışmıyorsunuz. Bunun yerine, çıktıyı körüklemek için acının enerjisini kullandınız.<br><br>En karanlık saatlerde elde edilen üretkenlik yeni standarttır. İnsanın duygusal durumu ne olursa olsun işlev görebileceğini öğrendiniz. Bu bütünleşme sizi kırılamaz bir güç yapar. Acınız mirasa geri dönüştürüldü.<br><br>İçsel simyasal sürecin ustasısınız. Izdırabınızı en büyük mesleki gücünüze dönüştürdünüz. Yeni mimar işini kaliteyle imzalar. HocaMurad ateş ruhlarının imzasını arar. İşiniz artık bir derinlik ve ağırlık taşıyor." }
+                    { title: "8. Kalbi Düzen Tuğlalarıyla Yeniden İnşa Etmek", content: "Manevi kalp yumuşak bir doku değil, niyetin görkemli bir mimarisidir. Kırık bir kalp sadece yenilenmeye ihtiyaç duyan bir bina gibidir. Bu göreve usta bir duvarcı zihniyetiyle yaklaşmalısınız.<br><br>Tuğlalar reconstruct için kullanılan disiplin act'leridir. Her seferinde programı takip ettiğinizde yeni bir taş koyarsınız. Hayatınızın parçalarını birbirine bağlamak için tutarlı çaba harcını kullanın.<br><br>Yeniden inşa, hiçbir şekilde aceleye getirilemeyecek yavaş bir süreçtir. Geçمین enkazına bakmayın; yükselen duvarlara bakın. Siz daha güzel bir gelecek kalbinin mimarısınız. Düzen, ruhunuz için yeterince güçlü olan tek malzemedir." },
+                    { title: "9. Zihinsel Savaş Alanında Maksimum Dayanıklılık", content: "Umutsuzluk, zihninizin egemen topraklarını işgal eden bir düşman savaşçıdır. Düşüncelerinize stratejik bir savaş odasındaki askerler gibi davranmalısınız. Düşman düşünceleri belirlemeli ve mantık ile etkisiz hale getirmelisiniz.<br><br>Umutsuzlukla veya vazgeçmekle pazarlık yapmayın. Temel stratejiniz sürekli günlük eylemin ofansifidir. Tamamlanan هر eylem, geri kazanılan bir bölgedir. Odağınızın etrafında yüksek güvenlikli bir çevre koruyun.<br><br>Siz komutansınız ve mutlak sadakat talep etmelisiniz. Savaş, iş alanındaki küçük zaferlerin birikimiyle kazanılır. Bu barış zamanı değil; benliğin mutlak fethinin zamanıdır. Günlük rutin sizi duygularınızın siperidir." },
+                    { title: "10. Turkuaz İnsanın Yükselişi: Başarısızlığı Aşmak", content: "Evriminizin son aşaması, acının işe entegre edilmesidir. HocaMurad ruhun yara dokusunun en güçlü olduğunu açıklar. Artık trajediyi gizlemeye çalışmıyorsunuz. Bunun yerine, çıktıyı körüklemek için acının enerjisini kullandınız.<br><br>En karanlık saatlerde elde edilen üretkenlik yeni standarttır. İnsanın duygusal durumu ne olursa olsun işlev görebileceğini öğrendiniz. Bu bütünleşme sizi kırılamaz bir güç yapar. Acınız mirasa geri dönüştürüldü.<br><br>İçsel simyasal sürecin ustasısınız. Izdırabınızı en بزرگ mesleki gücünüze dönüştürdünüz. Yeni mimar işini kaliteyle imzalar. HocaMurad ateş ruhlarının imzasını arar. İşiniz artık bir derinlik ve ağırlık taşıyor." }
                 ]
             },
             en: {
@@ -307,11 +304,17 @@
         let isPlaying = false;
         let utterance = null;
 
+        function showMsg(text) {
+            const box = document.getElementById('msg-box');
+            box.innerText = text;
+            box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 3000);
+        }
+
         function setLang(lang) {
             currentLang = lang;
             document.body.className = lang === 'fa' ? 'rtl bg-slate-950 text-slate-200' : 'bg-slate-950 text-slate-200';
             
-            // UI Updates
             document.getElementById('side-title').innerText = bookData[lang].title;
             document.getElementById('side-author').innerText = bookData[lang].author;
             document.getElementById('download-text').innerText = lang === 'fa' ? 'دانلود فایل‌های PDF' : (lang === 'en' ? 'Download PDFs' : 'İndirmeler');
@@ -319,7 +322,6 @@
             document.getElementById('google-play-text').innerText = bookData[lang].googlePlay;
             document.getElementById('footer-motto').innerText = bookData[lang].motto;
             
-            // Buttons highlight
             ['tr', 'en', 'fa'].forEach(l => {
                 document.getElementById('btn-' + l).classList.remove('text-turquoise');
             });
@@ -354,7 +356,7 @@
                 <div class="content-body">
                     <p>${content.content}</p>
                 </div>
-                <!-- Context Specific Download Link -->
+                <!-- Context Specific Download Link with YELLOW Color -->
                 <div class="mt-12 p-6 rounded-xl bg-white/5 border border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
                     <div class="flex items-center gap-4">
                         <i class="fas fa-file-pdf text-4xl text-turquoise"></i>
@@ -363,7 +365,7 @@
                             <p class="mb-0 text-xs text-slate-500">PDF Document</p>
                         </div>
                     </div>
-                    <a href="pdf/${pdfFile}" download class="px-6 py-2 bg-turquoise text-black rounded-full font-bold hover:scale-105 transition shadow-lg">
+                    <a href="pdf/${pdfFile}" download class="px-6 py-2 bg-[var(--bright-yellow)] text-black rounded-full font-bold hover:scale-105 transition shadow-lg">
                         <i class="fas fa-download mr-2"></i> ${downText}
                     </a>
                 </div>
@@ -385,47 +387,50 @@
             }
         }
 
-        // --- SPEECH LOGIC ---
         function toggleSpeech() {
+            if (currentLang === 'fa') {
+                showMsg("گوینده فارسی موجود نیست");
+                return;
+            }
+
+            const playBtnDesktop = document.getElementById('playBtnDesktop');
+            const playBtnMobile = document.getElementById('playBtnMobile');
+
             if (isPlaying) {
                 synthesis.pause();
                 isPlaying = false;
-                document.getElementById('playBtn').innerHTML = '<i class="fas fa-play"></i>';
+                playBtnDesktop.innerHTML = '<i class="fas fa-play"></i>';
+                playBtnMobile.innerHTML = '<i class="fas fa-play"></i>';
             } else {
                 if (synthesis.paused) {
                     synthesis.resume();
                 } else {
                     const text = document.getElementById('content-area').innerText;
                     utterance = new SpeechSynthesisUtterance(text);
-                    
-                    // Specific Language Voice Support
-                    if (currentLang === 'tr') {
-                        utterance.lang = 'tr-TR';
-                    } else if (currentLang === 'fa') {
-                        utterance.lang = 'fa-IR'; // Persian Human-like Voice
-                    } else {
-                        utterance.lang = 'en-US';
-                    }
-                    
+                    utterance.lang = currentLang === 'tr' ? 'tr-TR' : 'en-US';
                     utterance.rate = document.getElementById('speedRange').value;
                     utterance.volume = document.getElementById('volRange').value;
                     
                     utterance.onend = () => {
                         isPlaying = false;
-                        document.getElementById('playBtn').innerHTML = '<i class="fas fa-play"></i>';
+                        playBtnDesktop.innerHTML = '<i class="fas fa-play"></i>';
+                        playBtnMobile.innerHTML = '<i class="fas fa-play"></i>';
                     };
-                    
                     synthesis.speak(utterance);
                 }
                 isPlaying = true;
-                document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i>';
+                playBtnDesktop.innerHTML = '<i class="fas fa-pause"></i>';
+                playBtnMobile.innerHTML = '<i class="fas fa-pause"></i>';
             }
         }
 
         function stopSpeech() {
             synthesis.cancel();
             isPlaying = false;
-            document.getElementById('playBtn').innerHTML = '<i class="fas fa-play"></i>';
+            const playBtnDesktop = document.getElementById('playBtnDesktop');
+            const playBtnMobile = document.getElementById('playBtnMobile');
+            if(playBtnDesktop) playBtnDesktop.innerHTML = '<i class="fas fa-play"></i>';
+            if(playBtnMobile) playBtnMobile.innerHTML = '<i class="fas fa-play"></i>';
         }
 
         function updateSpeed() {
@@ -437,7 +442,6 @@
             if(utterance) utterance.volume = document.getElementById('volRange').value;
         }
 
-        // Init
         window.onload = () => {
             setLang('tr');
         };
